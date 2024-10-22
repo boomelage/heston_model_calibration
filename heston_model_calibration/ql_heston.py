@@ -10,7 +10,7 @@ class ql_heston():
         T = vol_matrix.columns.tolist()
         K = vol_matrix.index.tolist()
         heston_helpers = []
-        v0 = 0.01; kappa = 0.2; theta = 0.02; rho = -0.75; eta = 0.5;
+        v0 = 0.01; kappa = 0.2; theta = 0.02; rho = -0.75; eta = 0.5
         process = ql.HestonProcess(
             r_ts,
             g_ts,
@@ -44,4 +44,7 @@ class ql_heston():
                           ql.EndCriteria(500, 50, 1.0e-8,1.0e-8, 1.0e-8))
 
         theta, kappa, eta, rho, v0 = model.params()
-        return {'theta':theta, 'kappa':kappa, 'eta':eta, 'rho':rho, 'v0':v0}
+        if v0 == 0.01 and kappa == 0.2 and theta == 0.02 and rho == -0.75 and eta == 0.5:
+            return {'theta':None, 'kappa':None, 'eta':None, 'rho':None, 'v0':None}
+        else:
+            return {'theta':theta, 'kappa':kappa, 'eta':eta, 'rho':rho, 'v0':v0}
