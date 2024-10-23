@@ -1,4 +1,5 @@
 import QuantLib as ql
+import pandas as  pd
 class ql_heston():
     def calibrate_heston(vol_matrix,s,r,g):
         calculation_date = ql.Date.todaysDate()
@@ -26,16 +27,18 @@ class ql_heston():
 
         for t in T:
             for k in K:
-                p = ql.Period(int(t),ql.Days)
-                volatility = vol_matrix.loc[k,t]
-                helper = ql.HestonModelHelper(
-                    p, ql.UnitedStates(ql.UnitedStates.NYSE), float(s), k, 
-                    ql.QuoteHandle(ql.SimpleQuote(volatility)), 
-                    r_ts, 
-                    g_ts
-                    )
-                helper.setPricingEngine(engine)
-                heston_helpers.append(helper)
+                volatility = vol_matrix.loc[k, t]
+                if not pd.isna(volatility):
+                    p = ql.Period(int(t),ql.Days)
+                    helper = ql.HestonModelHelper(
+                        p, ql.UnitedStates(ql.UnitedStates.NYSE), float(s), k, 
+                        ql.QuoteHandle(ql.SimpleQuote(volatility)), 
+                        r_ts, 
+                        g_ts
+                        )
+                    helper.setPricingEngine(engine)
+                    heston_helpers.append(helper)
+
 
         lm = ql.LevenbergMarquardt(1e-8, 1e-8, 1e-8)
 

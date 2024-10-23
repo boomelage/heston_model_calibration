@@ -1,4 +1,5 @@
 LICENSE
+README.md
 setup.py
 heston_model_calibration/__init__.py
 heston_model_calibration/ql_heston.py
