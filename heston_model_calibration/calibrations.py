@@ -4,6 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def collect_calibrations(directory=None):
+	"""
+	leave directory as None for current working directory
+
+	returns a dataframe of daily calibration details
+	"""
 	if directory == None:
 		files = [f for f in os.listdir() if f.endswith('.csv')]
 	else:
@@ -13,12 +18,14 @@ def collect_calibrations(directory=None):
 	for f in files:
 		dfs.append(pd.read_csv(f).iloc[:,1:])
 
-	df = pd.concat(dfs,ignore_index=True)
+	dfs = [df for df in dfs if not df.empty and not df.isna().all().all()]
+	df = pd.concat(dfs, ignore_index=True).dropna()
 
-
+	df = df[df['relative_error']<1]
 	difference = df['heston']-df['black_scholes']
 	relative_error = df['heston']/df['black_scholes']-1
-
+	difference, relative_error = difference.dropna(),relative_error.dropna()
+	
 	MRE = np.mean(relative_error)
 	MARE = np.mean(np.abs(relative_error))
 	MAE = np.mean(np.abs(difference))
@@ -49,7 +56,11 @@ def collect_calibrations(directory=None):
 	calibrations['calculation_date'] = pd.to_datetime(calibrations['calculation_date'])
 	calibrations = calibrations.sort_values(by='calculation_date')
 	print(calibrations)
-	spotplot = calibrations[['calculation_date','spot_price']].copy().set_index(['calculation_date'])
-	plt.figure()
-	plt.plot(spotplot)
-	plt.show()
+	plotcols = ['calculation_date','spot_price','theta','kappa','rho','eta','v0']
+	plotvalues = calibrations[plotcols].copy().set_index(['calculation_date'])
+	for col in plotvalues.columns:
+		plt.figure()
+		plt.plot(plotvalues[col])
+		plt.title(col.replace('_',' '))
+		plt.show()
+	return calibrations
