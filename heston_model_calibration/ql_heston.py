@@ -47,7 +47,8 @@ class ql_heston():
                           ql.EndCriteria(500, 50, 1.0e-8,1.0e-8, 1.0e-8))
 
         theta, kappa, eta, rho, v0 = model.params()
+        feller = 2*kappa*theta-eta**2
         if v0 == 0.01 and kappa == 0.2 and theta == 0.02 and rho == -0.75 and eta == 0.5:
-            return {'theta':None, 'kappa':None, 'eta':None, 'rho':None, 'v0':None}
+            return {'theta':None, 'kappa':None, 'eta':None, 'rho':None, 'v0':None, 'feller':None}
         else:
-            return {'theta':theta, 'kappa':kappa, 'eta':eta, 'rho':rho, 'v0':v0}
+            return {'theta':theta, 'kappa':kappa, 'eta':eta, 'rho':rho, 'v0':v0, 'feller': feller}
